@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>我的个人主页</title>
+  <style>
+    body {
+      font-family: "Microsoft YaHei", sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f4f6f9;
+      color: #333;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 50px auto;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      padding: 30px;
+    }
+
+    .avatar {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      margin: 0 auto;
+      display: block;
+      border: 4px solid #007acc;
+    }
+
+    h1 {
+      text-align: center;
+      margin: 20px 0 10px;
+      color: #007acc;
+    }
+
+    p.subtitle {
+      text-align: center;
+      color: #666;
+      margin-bottom: 30px;
+    }
+
+    h2 {
+      border-left: 4px solid #007acc;
+      padding-left: 10px;
+      margin-top: 30px;
+      color: #444;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    ul li {
+      margin: 8px 0;
+      padding-left: 10px;
+      position: relative;
+    }
+
+    ul li::before {
+      content: "•";
+      position: absolute;
+      left: -10px;
+      color: #007acc;
+    }
+
+    .links {
+      text-align: center;
+      margin-top: 30px;
+    }
+
+    .links a {
+      display: inline-block;
+      margin: 0 10px;
+      padding: 10px 20px;
+      border-radius: 20px;
+      text-decoration: none;
+      background: #007acc;
+      color: #fff;
+      transition: background 0.3s;
+    }
+
+    .links a:hover {
+      background: #005f99;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <img src="https://avatars.githubusercontent.com/u/9919?s=200&v=4" alt="头像" class="avatar">
+    <h1>阿珂兄</h1>
+    <p class="subtitle">Web 开发爱好者 | 个人主页示例</p>
+
+    <h2>关于我</h2>
+    <p>大家好！我是一个热爱编程和设计的学生/开发者，目前正在学习如何构建个人网站。这是我搭建的第一个主页 🎉。</p>
+
+    <h2>技能</h2>
+    <ul>
+      <li>HTML / CSS / JavaScript 基础</li>
+      <li>Python 数据分析</li>
+      <li>Git 版本控制</li>
+    </ul>
+
+    <h2>联系方式</h2>
+    <ul>
+      <li>邮箱：example@email.com</li>
+      <li>微信：example123</li>
+    </ul>
+
+    <div class="links">
+      <a href="https://github.com/你的用户名" target="_blank">GitHub</a>
+      <a href="https://www.linkedin.com" target="_blank">LinkedIn</a>
+    </div>
+  </div>
+</body>
+</html>
