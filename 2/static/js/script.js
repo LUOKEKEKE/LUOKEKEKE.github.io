@@ -223,4 +223,32 @@ window.addEventListener('load', function() {
         pageLoading.style.opacity = '0';
     }, 100);
 });
+// --- 音乐播放控制代码 ---
+(function() {
+    var audio = document.getElementById('audioDom');
 
+    // 1. 定义播放函数
+    function startPlay() {
+        if (audio.paused) {
+            audio.play().then(function() {
+                console.log("音乐开始播放");
+            }).catch(function(err) {
+                console.log("播放失败:", err);
+            });
+        }
+    }
+
+    // 2. 监听页面的第一次点击，触发播放（解决浏览器拦截）
+    document.addEventListener('click', startPlay, { once: true });
+
+    // 3. 兼容微信环境自动播放
+    document.addEventListener("WeixinJSBridgeReady", function () {
+        startPlay();
+    }, false);
+
+    // 4. 配合你原有的 Loading 逻辑：
+    // 当 Loading 结束时尝试播放一次
+    window.addEventListener('load', function() {
+        setTimeout(startPlay, 500); 
+    });
+})();
