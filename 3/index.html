@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html style="height: 100%" lang="en">
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="utf-8">
+</head>
+
+<body style="height: 100%; margin: 0">
+    <div id="container" style="height: 100%"></div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.4.3/echarts.min.js"></script>
+    <script type="text/javascript">
+        // 兰州坐标作为中心点
+        var lanzhouCoord = [103.8343, 36.0611];
+        
+        // 定义从兰州辐射到各个城市的点，每个点配置不同颜色和数值
+        var points = [
+            { name: '南京', value: [118.8062, 31.9208, 28], itemStyle: { color: '#00d4ff' } },
+            { name: '哈尔滨', value: [127.9688, 45.368, 26], itemStyle: { color: '#00e5d4' } },
+            { name: '呼和浩特', value: [110.3467, 41.4899, 24], itemStyle: { color: '#00f5b8' } },
+            { name: '长春', value: [125.8154, 44.2584, 22], itemStyle: { color: '#00ff9d' } },
+            { name: '北京', value: [116.4551, 40.2539, 30], itemStyle: { color: '#ff3d3d' } },
+            { name: '沈阳', value: [123.1238, 42.1216, 25], itemStyle: { color: '#ff5722' } },
+            { name: '石家庄', value: [114.4995, 38.1006, 23], itemStyle: { color: '#ff6b1c' } },
+            { name: '天津', value: [117.4219, 39.4189, 21], itemStyle: { color: '#ff8514' } },
+            { name: '太原', value: [112.3352, 37.9413, 19], itemStyle: { color: '#ff9f0e' } },
+            { name: '西安', value: [109.1162, 34.2004, 17], itemStyle: { color: '#ffb905' } },
+            { name: '银川', value: [106.3586, 38.1775, 15], itemStyle: { color: '#ffd310' } },
+            { name: '西宁', value: [101.4038, 36.8207, 13], itemStyle: { color: '#ffe714' } },
+            { name: '成都', value: [103.9526, 30.7617, 11], itemStyle: { color: '#d4ff1f' } },
+            { name: '重庆', value: [108.384366, 30.439702, 9], itemStyle: { color: '#b9ff23' } },
+            { name: '长沙', value: [113.0823, 28.2568, 7], itemStyle: { color: '#8fff2c' } },
+            { name: '昆明', value: [102.9199, 25.46639, 5], itemStyle: { color: '#5dff34' } },
+            { name: '台湾', value: [119.4543, 25.9222, 3], itemStyle: { color: '#00d4ff' } }
+        ];
+
+        // 兰州中心点，使用特殊样式
+        var lanzhouPoint = [
+            { name: '兰州', value: [103.8343, 36.0611, 30], itemStyle: { color: '#ffcc00' } }
+        ];
+
+        // 生成从兰州辐射到各个城市的连线数据
+        var linesData = points.map(function(point) {
+            return {
+                coords: [lanzhouCoord, [point.value[0], point.value[1]]],
+                lineStyle: { 
+                    color: point.itemStyle.color 
+                },
+                value: point.value[2]
+            };
+        });
+
+        var myChart = echarts.init(document.getElementById('container'));
+        myChart.showLoading();
+
+        // 使用在线的中国地图数据
+        $.ajax({
+            url: 'https://geo.datav.aliyun.com/areas_v3/bound/100000_full.json',
+            dataType: 'json',
+            success: function(geoJson) {
+                echarts.registerMap('china', geoJson);
+                myChart.hideLoading();
+                renderChart();
+            },
+            error: function() {
+                // 备用方案：使用备用CDN
+                $.getJSON('https://fastly.jsdelivr.net/npm/echarts@5.4.3/map/json/china.json', function(geoJson) {
+                    echarts.registerMap('china', geoJson);
+                    myChart.hideLoading();
+                    renderChart();
+                }).fail(function() {
+                    myChart.hideLoading();
+                    alert('地图数据加载失败，请检查网络连接');
+                });
+            }
+        });
+
+        function renderChart() {
+            
+            option = {
+                backgroundColor: '#013954',
+                title: {
+                    text: '足迹',
+                    subtext: 'Tip: 台湾 是中国领土不可分割的一部分',
+                    left: 60,
+                    top: 30,
+                    textStyle: {
+                        color: '#fff',
+                        fontSize: 28,
+                        fontWeight: 'bold'
+                    },
+                    subtextStyle: {
+                        color: '#4fb856',
+                        fontSize: 14
+                    }
+                },
+                visualMap: {
+                    min: 1,
+                    max: 30,
+                    left: 60,
+                    bottom: 100,
+                    calculable: true,
+                    seriesIndex: [1],
+                    inRange: {
+                        color: ['#00d4ff', '#ffcc00', '#ff3d3d']
+                    },
+                    textStyle: {
+                        color: '#fff',
+                        fontSize: 14
+                    },
+                    itemWidth: 25,
+                    itemHeight: 140,
+                    dimension: 2
+                },
+                geo: {
+                    map: 'china',
+                    aspectScale: 0.75,
+                    zoom: 1.1,
+                    roam: true,
+                    scaleLimit: {
+                        min: 0.5,
+                        max: 3
+                    },
+                    itemStyle: {
+                        normal: {
+                            borderColor: '#00d4ff',
+                            borderWidth: 2,
+                            areaColor: {
+                                type: 'radial',
+                                x: 0.5,
+                                y: 0.5,
+                                r: 0.8,
+                                colorStops: [{
+                                    offset: 0,
+                                    color: '#09132c'
+                                }, {
+                                    offset: 1,
+                                    color: '#274d68'
+                                }],
+                                globalCoord: true
+                            },
+                            shadowColor: 'rgb(58,115,192)',
+                            shadowOffsetX: 10,
+                            shadowOffsetY: 11
+                        },
+                        emphasis: {
+                            areaColor: '#2AB8FF',
+                            borderWidth: 0
+                        }
+                    },
+                    regions: [{
+                        name: '南海诸岛',
+                        itemStyle: {
+                            areaColor: 'rgba(0, 10, 52, 1)',
+                            borderColor: 'rgba(0, 10, 52, 1)',
+                            opacity: 0
+                        }
+                    }]
+                },
+                series: [
+                    {
+                        type: 'map',
+                        roam: true,
+                        scaleLimit: {
+                            min: 0.5,
+                            max: 3
+                        },
+                        label: {
+                            normal: {
+                                show: false
+                            },
+                            emphasis: {
+                                show: false
+                            }
+                        },
+                        itemStyle: {
+                            normal: {
+                                borderColor: '#00d4ff',
+                                borderWidth: 2,
+                                areaColor: {
+                                    type: 'radial',
+                                    x: 0.5,
+                                    y: 0.5,
+                                    r: 0.8,
+                                    colorStops: [{
+                                        offset: 0,
+                                        color: '#09132c'
+                                    }, {
+                                        offset: 1,
+                                        color: '#274d68'
+                                    }],
+                                    globalCoord: true
+                                }
+                            },
+                            emphasis: {
+                                areaColor: 'rgb(46,229,206)',
+                                borderWidth: 0.1
+                            }
+                        },
+                        zoom: 1.1,
+                        map: 'china'
+                    },
+                    {
+                        type: 'effectScatter',
+                        coordinateSystem: 'geo',
+                        showEffectOn: 'render',
+                        zlevel: 1,
+                        rippleEffect: {
+                            period: 4,
+                            scale: 6,
+                            brushType: 'stroke'
+                        },
+                        hoverAnimation: true,
+                        label: {
+                            normal: {
+                                formatter: '{b}',
+                                position: 'right',
+                                offset: [15, 0],
+                                fontSize: 14,
+                                color: '#1DE9B6',
+                                show: true
+                            }
+                        },
+                        itemStyle: {
+                            normal: {
+                                shadowBlur: 10,
+                                shadowColor: '#333'
+                            }
+                        },
+                        symbolSize: 12,
+                        data: points
+                    },
+                    {
+                        name: '兰州辐射',
+                        type: 'effectScatter',
+                        coordinateSystem: 'geo',
+                        zlevel: 2,
+                        showEffectOn: 'render',
+                        rippleEffect: {
+                            period: 3,
+                            brushType: 'stroke',
+                            scale: 8
+                        },
+                        symbol: 'circle',
+                        symbolSize: 40,
+                        itemStyle: {
+                            normal: {
+                                color: 'rgba(255, 204, 0, 0.3)',
+                                shadowBlur: 30,
+                                shadowColor: '#ffcc00'
+                            }
+                        },
+                        data: lanzhouPoint
+                    },
+                    {
+                        name: '兰州中心',
+                        type: 'scatter',
+                        coordinateSystem: 'geo',
+                        zlevel: 3,
+                        label: {
+                            normal: {
+                                show: true,
+                                formatter: '{b}',
+                                position: 'bottom',
+                                fontSize: 16,
+                                fontWeight: 'bold',
+                                color: '#fff',
+                                offset: [0, 20]
+                            }
+                        },
+                        symbol: 'pin',
+                        symbolSize: 50,
+                        itemStyle: {
+                            normal: {
+                                color: '#ffcc00',
+                                shadowBlur: 25,
+                                shadowColor: '#ffcc00'
+                            }
+                        },
+                        data: lanzhouPoint
+                    },
+                    {
+                        type: 'lines',
+                        zlevel: 1,
+                        animation: false,
+                        progressive: 0,
+                        effect: {
+                            show: false
+                        },
+                        lineStyle: {
+                            normal: {
+                                width: 2,
+                                opacity: 0.7,
+                                curveness: 0.3
+                            }
+                        },
+                        data: linesData
+                    },
+                    {
+                        type: 'lines',
+                        zlevel: 2,
+                        effect: {
+                            show: true,
+                            period: 3,
+                            trailLength: 0.15,
+                            symbol: 'arrow',
+                            symbolSize: 12,
+                            constantSpeed: 50
+                        },
+                        lineStyle: {
+                            normal: {
+                                width: 0,
+                                curveness: 0.3
+                            }
+                        },
+                        data: linesData
+                    }
+                ]
+            };
+            
+            myChart.setOption(option, true);
+        }
+
+        window.addEventListener('resize', function() {
+            myChart.resize();
+        });
+    </script>
+</body>
+
+</html>
